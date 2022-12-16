@@ -1,0 +1,108 @@
+--this script should work for all games
+--might lag if theres alot of hitboxes
+
+
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Script made better by Happppya#6091";
+    Text = "Original script by SimpleExploiter"; 
+    Duration = 100;
+})
+
+--[[
+HOW TO USE
+
+- press the "On" button to activate it. dont press it again or it will lag more
+- the textbox under the on button is the range. just put in a number like "15"
+- you can edit the default range under this
+--]]
+
+local defaultsize = 50 -- you can edit range in game. this is default range
+
+local ScreenGui = Instance.new("ScreenGui")
+local main = Instance.new("Frame")
+local label = Instance.new("TextLabel")
+local Hitbox = Instance.new("TextButton")
+
+ScreenGui.Parent = game.CoreGui
+
+main.Name = "main"
+main.Parent = ScreenGui
+main.BackgroundColor3 = Color3.fromRGB(107,107,107)
+main.Position = UDim2.new(0.40427351, 0, 0.34591195, 0)
+main.Size = UDim2.new(0, 100, 0, 100)
+main.Active = true
+main.Draggable = true
+
+label.Name = "label"
+label.Parent = main
+label.BackgroundColor3 = Color3.fromRGB(0,150,0)
+label.Size = UDim2.new(0, 100, 0, 20)
+label.Font = Enum.Font.SourceSans
+label.Text = "hitbox gui"
+label.TextColor3 = Color3.fromRGB(0, 0, 0)
+label.TextScaled = true
+label.TextSize = 5.000
+label.TextWrapped = true
+
+Hitbox.Name = "Activate"
+Hitbox.Parent = main
+Hitbox.BackgroundColor3 = Color3.fromRGB(150,150,150)
+Hitbox.Position = UDim2.new(0, 0, 0.2, 0)
+Hitbox.Size = UDim2.new(1,0,0.4,0)
+Hitbox.Font = Enum.Font.SourceSans
+Hitbox.Text = "On"
+Hitbox.TextColor3 = Color3.fromRGB(0, 0, 0)
+Hitbox.TextSize = 40.000
+
+local sizebox = Instance.new("TextBox")
+sizebox.Parent = main
+sizebox.BackgroundColor3 = Color3.fromRGB(150,150,150)
+sizebox.Position = UDim2.new(0, 0, 0.61, 0)
+sizebox.Size = UDim2.new(1,0,0.4,0)
+sizebox.Font = Enum.Font.SourceSans
+sizebox.Text = " "
+sizebox.PlaceholderText = "Range"
+Hitbox.TextColor3 = Color3.fromRGB(0, 0, 0)
+Hitbox.TextSize = 40.000
+
+local function edithum(v)
+    v.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize)
+	v.Transparency = 0.98
+	v.BrickColor = BrickColor.new("Really black")
+	v.Material = "Neon"
+	v.CanCollide = false
+end
+
+Hitbox.MouseButton1Down:connect(function()
+	_G.HeadSize = tonumber(sizebox.Text) or defaultsize
+    
+
+	_G.Disabled = true
+    while task.wait(1) do
+            pcall(function()
+            _G.HeadSize = tonumber(sizebox.Text) or defaultsize
+            print(sizebox.Text)
+        		if _G.Disabled then
+        		
+            		
+            		
+                        
+                    for i,v in pairs(game.Workspace:GetDescendants()) do
+                      
+                           
+                            
+        			    if v.Name == "HumanoidRootPart" and v.Parent.Name ~= game.Players.LocalPlayer.Name then
+        			        pcall(function()
+        						edithum(v)
+        					end)	
+        			     end
+            		    	
+                        
+                    end
+                
+    			
+    		end
+		end)
+    end
+    
+end)
