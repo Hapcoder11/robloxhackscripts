@@ -1,0 +1,41 @@
+local rs = game.ReplicatedStorage
+local alternate = false
+local debugtimes = 150
+
+while wait(0.32) do
+    for i = 1,30 do
+        pcall(function()
+            local found = false
+            for i,plr in pairs (game.Players:GetChildren()) do
+                if plr ~= game.Players.LocalPlayer then
+                    local ch = plr.Character
+                    local hum = ch.HumanoidRootPart or ch.PrimaryPart or ch.Head
+                    local lch = game.Players.LocalPlayer.Character
+                    local lhum = lch.HumanoidRootPart or lch.PrimaryPart or lch.Head
+                    
+                    local dis = math.abs((lhum.Position - hum.Position).Magnitude)
+                
+                    if dis < 7.5 then
+                        found = true
+                      
+                        --lhum:SetPrimaryPartCFrame(CFrame.LookAt(lhum.Position, hum.Position))
+                    end
+                end
+            end
+            
+            if found == true then
+                alternate = not alternate
+                if alternate == true then
+                    rs.Remotes.Hit:FireServer("Right Arm")
+                else
+                    rs.Remotes.Hit:FireServer("Left Arm")
+                end
+               
+                debugtimes = debugtimes - 1
+                if debugtimes == 0 then return end
+            end
+        end)
+        task.wait(0.011)
+    end
+   
+end
