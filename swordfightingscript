@@ -1,0 +1,137 @@
+--------------------------------------------
+--script made by Happppya#6091
+
+local maxRange = 24 -- if another player enters within this many studs, will lock on (point sword at them)
+local stayAwayDistance = 1 -- distance in studs that you stay away from the target 
+local stayAwayActivation = 9 -- if another player enters within this many studs, will tp to them staying some studs away (number above)
+
+
+--------------------------------------------
+local d = game:GetService("Debris")
+
+function highlightPart(part, t)
+    local highlight = Instance.new("Highlight")
+    Highlight.Parent = part
+    d:AddItem(highlight, t)
+end
+
+function distancepos(rpos1,rpos2)
+    local pos1 = Vector3.new(rpos1.X, 0, rpos1.Z)
+    local pos2 = Vector3.new(rpos2.X, 0, rpos2.Z)
+    return math.abs((pos1 - pos2).Magnitude)
+end
+
+function closestCharPart(c, swordtip)
+    local bestdis 
+    local best
+    for i,v in pairs(c:GetDescendants()) do
+        if v.Name ~= "SphereThing" then
+            if v:IsA("Attachment") then
+                pos = v.WorldPosition
+            end
+            if v:IsA("BasePart") then
+                pos = v.Position
+            end
+            local dis = distancepos(pos, swordtip)
+            if bestdis == nil then
+                bestdis = dis 
+                best = v
+            end
+            
+            if dis < bestdis then
+                bestdis = dis
+                best = v
+            end
+        end
+    end
+    return best, pos
+end
+
+function ClosestPlayer()
+   
+    local lc = game.Players.LocalPlayer.Character
+    
+    local bestdis = maxRange
+    local best
+    
+    for i,v in pairs(game.Players:GetChildren()) do
+        
+        local c = v.Character
+        
+        if c then
+            carm = c:FindFirstChild("HumanoidRootPart")
+            lcarm = lc:FindFirstChild("HumanoidRootPart")
+            if lc and c ~= lc and carm and lcarm then
+                
+                dis = distancepos(carm.Position, lcarm.Position)
+                
+                if dis < bestdis then
+                    bestdis = dis
+                    best = c
+                end
+            end
+        end
+    end
+    print(best, bestdis)
+    return best, bestdis
+    
+    
+    
+end
+
+
+
+function angleRightArmTo(objpos)
+    lcf = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+    local lookpos = Vector3.new(objpos.X, lcf.Position.Y, objpos.Z)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.lookAt(lcf.Position, lookpos)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame *= CFrame.Angles(0,math.rad(20),0)
+    --[[local RightShoulder = game.Players.LocalPlayer.Character.Torso:FindFirstChild("Right Shoulder")
+    local shoulderSize = RightShoulder.Part1.Size
+    local fixedRS = RightShoulder.Part1.CFrame + Vector3.new(0,shoulderSize.Y/2,0)
+    local cOffset = game.Players.LocalPlayer.Character.Torso.CFrame:ToObjectSpace(fixedRS)
+    print(cOffset)]]
+end
+
+
+
+local toggled = false
+local uis = game:GetService("UserInputService")
+uis.InputBegan:Connect(function(key, processed)
+    if processed then return end
+    if key.KeyCode == Enum.KeyCode.L then
+        toggled = not toggled
+        print(toggled)
+    end
+end)
+spawn(function()
+while true do
+ 
+    if toggled == true then 
+       
+        pcall(function()
+            local closest, bestdis = ClosestPlayer()
+            local handpos = game.Players.LocalPlayer.Character["Right Arm"].RightGripAttachment.WorldPosition
+            local hmrlooking = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.lookVector * Vector3.new(2,2,2)
+            tip = handpos + hmrlooking
+            local best, bpos = closestCharPart(closest, tip)
+            
+            if bestdis < stayAwayActivation then
+                local hmr = game.Players.LocalPlayer.Character.HumanoidRootPart
+                local n
+                local rand = math.random(1,2)
+                if rand == 1 then 
+                    n = -1 
+                elseif rand == 2 then 
+                    n = 1 
+                end
+               -- hmr.CFrame = hmr.CFrame * CFrame.new(0,0, (stayAwayDistance - bestdis)/2)
+               hmr.CFrame = closest.HumanoidRootPart.CFrame * CFrame.new(stayAwayDistance*-1,0,stayAwayDistance/4)
+            end
+            angleRightArmTo(bpos)
+        end)
+        
+    end
+    task.wait()
+end
+end)
