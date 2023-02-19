@@ -1,0 +1,777 @@
+
+--made by Happppya#6091
+--you can modify variables under this text to change stuff
+
+--VARIABLES
+
+local blacklistedplayers = {"bbgunzz2", "joshlol2005"} -- if these people join ur game, u will join another server. bbgunz is head mod and joshlol is an active moderator
+
+local minrank = 10 -- leave if the persons rank in the group is more than 10 (these are all admins)
+local cdtime = 0.2 -- time it takes between spamming messages
+local discordtag = "Happppya 6091" -- ur discord tag (optional)
+local SpamMessage = "STAY MAD KIDS.SCRIPT MADE BY Happppya6091 (disco tag)" -- default message to spam
+
+
+local autoloadotherhacks = true -- loads some convenient hacks that i like. if you want to turn it off make it "false" instead of "true"
+local charorigin
+ 
+--DONT MODIFY STUFF BELOW
+local PlaceId = 7118938401
+if game.PlaceId ~= PlaceId then return end
+
+if autoloadotherhacks == true then
+    pcall(function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
+    end)
+end
+httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request 
+
+local uis = game:GetService("UserInputService")
+HttpService = game:GetService("HttpService")
+TeleportService = game:GetService("TeleportService")
+
+repeat
+    pcall(function()
+        chc = game.Players.LocalPlayer.Character
+    end)
+    task.wait(0.1)
+until chc
+
+function findlocalfolder()
+    for i,v in pairs(game.Workspace.TeamFolders:GetChildren()) do
+        local platfolder = v:FindFirstChild("Platoons")
+        if platfolder then
+            for i1, v1 in pairs(platfolder:GetChildren()) do
+                if v1.Name == game.Players.LocalPlayer.Name then 
+
+                        return v1
+
+                end 
+            end
+        end
+        
+    end
+end
+
+--REJOIN FUNCTION
+function rejoin()
+    TeleportService:Teleport(PlaceId, game.Players.LocalPlayer)
+end
+--REJOIN FUNCTION END
+
+--SELF DONATE FUNCTION
+function selfdonate(amount)
+    game.ReplicatedStorage.Remotes.Donate:FireServer(game.Players.LocalPlayer, amount)
+end
+--SELF DONATE FUNCTION END
+
+--SERVERHOP FUNCTION
+function serverhop()
+   local s,e =  pcall(function()
+        local servers = {}
+    	local req = httprequest({Url = "https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"})
+    	local body = HttpService:JSONDecode(req.Body)
+    	if body and body.data then
+    		for i, v in next, body.data do
+    			if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= JobId then
+    				table.insert(servers, 1, v.id)
+    			end 
+    		end
+    	end
+    	if #servers > 0 then
+    		TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], game.Players.LocalPlayer)
+    	else
+
+    	end
+   end)
+if not s then end
+end
+--
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/preztel/AzureLibrary/master/uilib.lua", true))()
+local Hax = Library:CreateTab("Happy Hax", "epic hax for this game made by Happppya#6091", true) 
+local ChatHax = Library:CreateTab("Spam Hax", "spam the chat and make them mad!!!", true) 
+local ServerHax = Library:CreateTab("Server Hax", "go to another server and destroy more!!!", true) 
+local LagHax = Library:CreateTab("Lag Hax", "make everyones game trash!!!", true) 
+local ReplyHax = Library:CreateTab("Reply Hax", "reply to them instantly!!!", true) 
+local TroopHax = Library:CreateTab("Base Hax", "use troops and ur base to win more!!!", true) 
+local FarmHax = Library:CreateTab("Farm Hax", "farm ez kills!!!", true) 
+local BuildHax = Library:CreateTab("Build Hax", "build op stuff!!!", true) 
+
+
+--BUILDHAX
+_G.CurrentTeamSelected = " "
+
+local teams = {
+    "Han",
+    "Spartan",
+    "Roman",
+    "English",
+    "Abbasid",
+    "Viking",
+}
+
+BuildHax:CreateDropDown("Selected Team ", teams, function(arg) --the (arg) is the option you choose 
+    _G.CurrentTeamSelected = arg
+end)
+
+BuildHax:CreateButton("Build Outpost", function() --you dont need "arg" for a button
+    local c = game.Players.LocalPlayer.Character
+    
+    if c and c:FindFirstChild("HumanoidRootPart") and tostring(game.Players.LocalPlayer.Team) ~= "Lobby" then
+        print("attempted to build outpost of " .. _G.CurrentTeamSelected)
+        local cf = CFrame.new(c.HumanoidRootPart.Position + Vector3.new(0,15,0))
+        local str = tostring(_G.CurrentTeamSelected) .. " Outpost"
+        game.ReplicatedStorage.Remotes.Build:FireServer(cf, str)
+    end
+end)
+
+BuildHax:CreateButton("Build Tradepost", function() --you dont need "arg" for a button
+    local c = game.Players.LocalPlayer.Character
+    
+    if c and c:FindFirstChild("HumanoidRootPart") and tostring(game.Players.LocalPlayer.Team) ~= "Lobby" then
+        print("attempted to build tradepost of " .. _G.CurrentTeamSelected)
+        local cf = CFrame.new(c.HumanoidRootPart.Position + Vector3.new(0,15,0))
+        local str = tostring(_G.CurrentTeamSelected) .. " Tradepost"
+        game.ReplicatedStorage.Remotes.Build:FireServer(cf, str)
+    end
+end)
+
+
+--FARM Hax
+_G.AutoFarm = false
+_G.AutoClick = false
+_G.AutoFarmTeleportSpeed = 0.001
+_G.AutoFarmOrbit = false
+_G.SwapTargetCooldown = 1
+
+
+FarmHax:CreateSlider("Swap Targets Cooldown", 1, 1000, function(arg) --the (arg) is the sliders value
+    _G.SwapTargetCooldown = arg
+end)
+
+FarmHax:CreateSlider("AutoFarm Cooldown", 0, 1000, function(arg) --the (arg) is the sliders value
+    _G.AutoFarmTeleportSpeed = arg/1000
+end)
+
+FarmHax:CreateToggle("Orbit Auto Farm Target", function(arg) --the (arg) is if the checkbox is toggled or not
+    _G.AutoFarmOrbit = arg
+end)
+
+FarmHax:CreateToggle("Enable Auto Farm", function(arg) --the (arg) is if the checkbox is toggled or not
+    _G.AutoFarm = arg
+    if arg == true then
+        charorigin = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").Position
+    elseif arg == false then
+        task.wait(0.12 + _G.AutoFarmTeleportSpeed)
+        game.Workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(0,130,0))
+    end
+end)
+
+FarmHax:CreateToggle("Enable Auto Click", function(arg) --the (arg) is if the checkbox is toggled or not
+    _G.AutoClick = arg
+end)
+
+
+--FARM HAX END
+--LAG BUTTONS
+--self donate
+_G.DonateSpeed = 1
+_G.DonateSpam = false
+LagHax:CreateSlider("Donate Speed", 1, 1000, function(arg) --the (arg) is the sliders value
+    _G.DonateSpeed = arg
+end)
+
+LagHax:CreateToggle("Enable Lag", function(arg) --the (arg) is if the checkbox is toggled or not
+    _G.DonateSpam = arg
+end)
+
+LagHax:CreateToggle("No Lag For You", function(arg) --the (arg) is if the checkbox is toggled or not
+    if arg == true then
+        game.Workspace.Effects.Parent = game.Lighting
+    elseif arg == false then
+        game.Lighting.Effects.Parent = game.Workspace
+    end
+end)
+--LAG BUTTONS END
+--SERVERHOP BUTTONS
+ServerHax:CreateButton("Server Hop", function() --you dont need "arg" for a button
+    serverhop()
+end)
+
+ServerHax:CreateButton("Rejoin", function() --you dont need "arg" for a button
+    rejoin()
+end)
+--SERVERHOP BUTTONS END
+--SPAM 
+_G.ChatSpam = false
+ChatHax:CreateToggle("Chat Spam", function(arg) --the (arg) is if the checkbox is toggled or not
+    _G.ChatSpam = arg
+end)
+--SPAM END
+
+--SPAM TEXT
+
+ChatHax:CreateTextBox("Spam Text", function(arg) --arg is what the text is inside the textbox
+   SpamMessage = arg
+end)
+--SPAM TEXT END
+
+--TROOP HACKS GUI
+function findbuttons()
+    local platoonfolder = findlocalfolder()
+
+    if platoonfolder then
+
+        local buildingsfolder = platoonfolder.Parent.Parent:FindFirstChild("Buildings")
+
+        for i,v in pairs(buildingsfolder:GetChildren()) do
+
+            if v:FindFirstChild("Buttons") then
+
+                return v.Buttons
+                
+            end
+        end
+        return false
+    else
+        warn("no platoon folder")
+    end
+
+    return false
+end
+
+function FindButton(buttons, buttonnum)
+
+    local stringnum = tostring(buttonnum)
+    for i,v in pairs(buttons:GetChildren()) do
+        if string.find(v.Name, stringnum) then
+            return v
+        end
+    end
+    return false
+end
+
+
+--1 light, 2 ranged, 3 heavy, 4 siege, 5 engineer
+
+
+TroopHax:CreateButton("Refresh Outposts", function() 
+    local lf = findlocalfolder()
+    local folder = lf.Parent.Parent
+    for i,v in pairs(folder.Buildings:GetChildren()) do
+        
+        if string.find(string.lower(v.Name), "outpost") then
+            local buttons = v:FindFirstChild("Buttons")
+
+            if buttons then
+
+                for i1,v1 in pairs(buttons:GetChildren()) do
+                    fireclickdetector(v1.ClickDetector)
+                    
+                end
+            else
+                warn("no buttons")
+            end
+        end
+    end
+end)
+
+TroopHax:CreateButton("Restock Outposts", function() 
+    local lf = findlocalfolder()
+    local folder = lf.Parent.Parent
+    for i,v in pairs(folder.Buildings:GetChildren()) do
+        
+        if string.find(string.lower(v.Name), "outpost") then
+            local buttons = v:FindFirstChild("Buttons")
+
+            if buttons then
+
+                for i1,v1 in pairs(buttons:GetChildren()) do
+                    if string.find(v1.Name, "N") then
+                        fireclickdetector(v1.ClickDetector)
+                    end
+                end
+                
+            else
+                warn("no buttons")
+            end
+        end
+    end
+end)
+
+TroopHax:CreateButton("Equip New Weapon", function() 
+    local buttons = findbuttons()
+    if buttons then
+        local light = FindButton(buttons, "WR")
+        fireclickdetector(light.ClickDetector)
+    end
+    task.wait(0.1)
+    local rack = buttons.Parent:FindFirstChild("WeaponRack")
+    if rack then
+        fireclickdetector(rack.ClickPart.ClickDetector)
+    end
+end)
+
+
+TroopHax:CreateButton("Buy Light Infantry", function() 
+    local buttons = findbuttons()
+    if buttons then
+        local light = FindButton(buttons, 1)
+        fireclickdetector(light.ClickDetector)
+    end
+end)
+
+TroopHax:CreateButton("Buy Ranged Troop", function() 
+    local buttons = findbuttons()
+    if buttons then
+        local light = FindButton(buttons, 2)
+        fireclickdetector(light.ClickDetector)
+    end
+end)
+
+TroopHax:CreateButton("Buy Heavy Infantry", function() 
+    local buttons = findbuttons()
+    if buttons then
+        local light = FindButton(buttons, 3)
+        fireclickdetector(light.ClickDetector)
+    end
+end)
+
+TroopHax:CreateButton("Buy Siege", function() 
+    local buttons = findbuttons()
+    if buttons then
+        local light = FindButton(buttons, 4)
+        fireclickdetector(light.ClickDetector)
+    end
+end)
+
+TroopHax:CreateButton("Buy Siege Engineer", function() 
+    local buttons = findbuttons()
+    if buttons then
+        local light = FindButton(buttons, 5)
+        fireclickdetector(light.ClickDetector)
+    end
+end)
+--TROOPS HACKS GUI END
+--HITBOX GUI
+_G.HeadSize = 100
+Hax:CreateSlider("Hitbox Size", 0, 100, function(arg) --the (arg) is the sliders value
+    _G.HeadSize = arg
+end)
+--HITBOX GUI END
+
+--TOGGLE AUTOLEAVE 
+_G.AutoLeave = true
+Hax:CreateToggle("Avoid Bans", function(arg) --the (arg) is if the checkbox is toggled or not
+    _G.Autoleave = arg
+end)
+-- TOGGLE AUTOLEAVE END
+
+--AUTOTOXIC TOGGLE 
+_G.AutoToxic = true
+
+_G.AlwaysReply = false -- always reply to everything everybody else says
+_G.AlwaysReplyWithName = true -- include their name
+_G.AlwaysReplyMessage = "shut up" -- message to always reply with
+
+ReplyHax:CreateToggle("Autotoxic", function(arg) --the (arg) is if the checkbox is toggled or not
+    _G.AutoToxic = arg
+end)
+
+ReplyHax:CreateToggle("Always Reply", function(arg) --the (arg) is if the checkbox is toggled or not
+    _G.AlwaysReply = arg
+end)
+
+ReplyHax:CreateToggle("Reply With Name", function(arg) --the (arg) is if the checkbox is toggled or not
+    _G.AlwaysReplyWithName = arg
+end)
+
+ReplyHax:CreateTextBox("Reply Message", function(arg) --arg is what the text is inside the textbox
+   _G.AlwaysReplyMessage = arg
+end)
+--AUTOTOXIC TOGGLE END
+
+
+--SPAM LOGIC
+ function vrand()
+     local r = 10
+     local fr = math.random(1,2)
+     if fr == 1 then r = r * -1 end
+    return r
+end
+
+spawn(function()
+    while task.wait() do
+        if _G.ChatSpam == true then
+            game.ReplicatedStorage.Remotes.ChatMessage:FireServer(SpamMessage, false)
+        end
+        
+
+    end
+end)
+
+
+spawn(function()
+    while true do
+        if _G.AutoFarm == true then
+            local foundone = false
+            
+            for i,randplr in pairs(game.Players:GetChildren()) do
+                if randplr.Character and randplr.Team ~= game.Players.LocalPlayer.Team and randplr.Character.Parent ~= game.Workspace and randplr.Character:FindFirstChild("Humanoid") and randplr.Character.Humanoid.Health > 0 then
+                        
+                        
+                        if _G.AutoFarmOrbit == true and randplr.Character:FindFirstChild("LowerTorso") then
+                            game.Workspace.CurrentCamera.CameraSubject = randplr.Character.LowerTorso
+                        elseif game.Players.LocalPlayer.Character:FindFirstChild("LowerTorso") then
+                             game.Workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character.LowerTorso
+                        end
+                        foundone = true
+                        
+                        for x = 1,_G.SwapTargetCooldown do
+                            if not randplr.Character:FindFirstChild("HumanoidRootPart") then break end
+                            local newvec = Vector3.new(vrand(), vrand(), vrand())
+                            local newcf = CFrame.new(randplr.Character.HumanoidRootPart.Position + newvec)
+                            game.Players.LocalPlayer.Character:PivotTo(newcf)
+                            task.wait(_G.AutoFarmTeleportSpeed)
+                        end
+                end
+            end
+            if foundone == false then 
+                game.Players.LocalPlayer.Character:PivotTo(CFrame.new(1000,1000,1000))
+                wait() 
+            end
+        else
+            wait()
+        end
+    end
+end)
+
+--SPAM DONATE LOGIC
+spawn(function()
+    local x = _G.DonateSpeed
+    while true do
+        if _G.DonateSpam == true then
+            x = x - 1
+            if x <= 0 then
+                x = _G.DonateSpeed
+                task.wait(0.05)
+            end
+            selfdonate(game.Players.LocalPlayer.leaderstats.Gold.Value - 1)
+        else
+            task.wait(0.1)
+        end
+    end
+end)
+--END
+--AUTOLEAVE LOGIC
+
+spawn(function()
+    while task.wait(0.1) do
+        if _G.AutoLeave == true then
+            for i,v in pairs(game.Players:GetChildren()) do
+                pcall(function()
+                    local rank = v:GetRankInGroup(2964904)
+                end)
+                local blacklisted = false
+                for i1,v1 in pairs(blacklistedplayers) do
+                    if v.Name == v1 then
+                        blacklisted = true
+                        break
+                    end
+                end
+                if (rank and rank > minrank) or blacklisted == true then
+                   serverhop()
+                end
+            end
+        end
+        if _G.AutoClick == true or _G.AutoFarm == true  then
+            game.ReplicatedStorage.Retriever:InvokeServer("Mouse1Down", Vector3.new(0,0,0), false)
+        end
+    end
+end)
+
+--AUTOLEAVE LOGIC END
+
+---HITBOX LOGIC
+function edithum(v)
+    v.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize)
+	v.Transparency = 0.98
+	v.BrickColor = BrickColor.new("Really black")
+	v.Material = "Neon"
+	v.CanCollide = false
+end
+
+
+spawn(function()
+    while task.wait(1) do
+        local s,e = pcall(function()
+		
+			local platoonfolder = findlocalfolder()
+            local localteamfolder = platoonfolder.Parent.Parent
+            local enemyteamfolder
+            
+            for i,v in pairs(game.Workspace.TeamFolders:GetChildren()) do
+                if v.Name ~= localteamfolder.Name then 
+                    enemyteamfolder = v
+                    for i1,v1 in pairs(enemyteamfolder.Platoons:GetDescendants()) do
+        			    local hum = v1:FindFirstChild("HumanoidRootPart")
+        			    if hum then
+        					edithum(hum)
+        			     end
+                    end
+		    	    for i1,v1 in pairs(enemyteamfolder.Players:GetChildren()) do
+		    	        local hum = v1:FindFirstChild("HumanoidRootPart")
+        			    if hum then
+        					edithum(hum)
+        			     end
+    		    	end
+    		    
+    		    	for i1,v1 in pairs(enemyteamfolder.Buildings:GetChildren()) do
+    		    	    local guards = v1:FindFirstChild("Guards")
+    		    	    if guards then
+    		    	        for i2,v2 in pairs(guards:GetChildren()) do
+        			           local hum = v2:FindFirstChild("HumanoidRootPart")
+        			            if hum then
+        					    	edithum(hum)
+        			            end
+    		                end
+    		    	    end
+        			    
+    		    	end
+                end
+            end
+
+        end)
+        if not s then
+           
+        end
+    end
+end)
+--HITBOX LOGIC END
+
+--AUTOTOXIC LOGIC
+
+function spamtext(o, plr)
+    if _G.AutoToxic == false then return end
+    
+    for i = 1,o[3] do
+        local t = o[1]
+        local rand = math.random(1,#t)
+        local nmsg = t[rand]
+        if o[2] == true then
+            nmsg = nmsg .. " " .. plr
+        end
+        game.ReplicatedStorage.Remotes.ChatMessage:FireServer("(a): " .. nmsg, false)
+        task.wait(cdtime)
+    end
+end
+do
+
+uis.InputBegan:Connect(function(io,processed)
+    if processed then return end
+    if io.KeyCode == Enum.KeyCode.H then
+         game.ReplicatedStorage.Remotes.ChatMessage:FireServer("STAY MAD KIDS.SCRIPT MADE BY Happppya6091 (disco tag)", false)
+    end
+end)
+end
+
+local reply1 = {"😃 cry cry waa waa", "😃 ez ez ez ez ez", "🤡 keep crying", "😃 youre bad", "😃 youre so trash", "😃 you are garbage", "😃 im just better", "🤡 cope", "🤡 ez kid", "🤡 nobody asked you"}
+local messageresponses = {
+    ["hack"] = {reply1,
+        true, 3},
+    ["shut up"] = {reply1,
+        true, 2},
+    ["stay mad"] = {reply1,
+        true, 2},
+    ["u suck"] = {reply1,
+        true, 3},
+    ["you suck"] = {reply1,
+        true, 3},
+    ["no skill"] = {reply1,
+        true, 2},
+     ["ez"] = {reply1,
+        true, 1},
+    ["trash"] = {reply1,
+        true, 3},
+    ["cheat"] = {reply1,
+        true, 2},
+    ["weird"] = {reply1,
+        true, 3},
+    ["wierd"] = {reply1,
+        true, 3},
+    ["exploit"] = {reply1,
+        true, 3},
+    ["bozo"] = {reply1,
+        true, 3},
+    ["noob"] = {reply1,
+        true, 3},
+    ["cope"] = {reply1,
+        true, 2},
+    ["ratio"] = {reply1,
+        true, 3},
+    ["report"] = {{"😃 oh no i have to spend 15 seconds to make another account"},
+        true, 1},
+    ["kid"] =  {reply1,
+        true, 3},
+    ["bad"] = {{"😃 youre worse", "😃 stay mad", "😃 so trash", "😃 ez kid", "😃 youre dumb", "😃 im better", "😃 cope"},
+        true, 2},
+    ["stop"] ={{"😃 no i wont stop", "😃 deal with it", "😃 get better"},
+        true, 2},
+    ["ban"] = {{"😃 they cant ban me", "😃 its not that hard to make another account"},
+        true, 4},
+    ["die"] = {reply1,
+        true, 5},
+    ["wymer"] = {{"OH NO NOT WYMER 😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭"},
+        false, 3},
+    ["gg"] = {{"😃 GG", "😃 good game"},
+        true, 1},
+    ["good game"] = {{"😃 GG", "😃 good game"},
+        true, 1},
+    ["skid"] = {{"i wrote the script myself 🤡"},
+        true, 2},
+    ["imagine"] = {{"🤡 imagine losing"},
+        true, 1},
+    ["block"] = {{"🤡 i dont want to talk to you", "no one cares"},
+        true, 4},
+    ["loser"] = {{"🤡 how am i a loser if im winning", "😃 cope", "😃 youre trash"},
+        true, 5},
+    ["ok"] = {{"😃 ok"},
+        true,1},
+    ["aight"] = {{"😃 aight"},
+        true,1},
+    ["right"] = {{"😃 alright"},
+        true,1},
+    ["notthatone4"] = {{discordtag},
+        false, 1},
+    ["fatherless"] = {{"how does hacking relate to me having parents 😐"},
+        true, 2},
+    ["no parents"] = {{"how does hacking relate to me having parents 😐"},
+        true, 2},
+    ["no dad"] = {{"how does hacking relate to me having parents 😐"},
+        true, 2},
+    ["basement"] = {{"how does me hacking relate to that 😐"},
+        true, 2},
+    ["virus"] = {{"😃 i dont have a virus"},
+        true, 1},
+    ["lego game"] = {{"😑 its not a lego game; you can use blender models in roblox","😑 this is a competetive fighting game; graphics dont matter"},
+        true, 4},
+    ["wow"] = {{"wowie wowzers 😑", "wowwww 😑"},
+        true, 1},
+    ["nah"] = {{"😑 nah"},
+        true, 1},
+    ["leave"] = {{"😑 you leave", "😑 nah", " ☹️ i dont think i will "},
+        true, 1},
+    ["speed"] = {{"i drank speed potions ok", " ☹i just didnt skip leg day"},
+        true, 1},
+    ["should"] = {{"😭 you should find your father"},
+        true, 1},
+    ["sad"] = {{"😑 hacking is not worse than putting in work and effort to be beaten by 50 lines of code"},
+        true, 1},
+    ["no skill"] = {{"😑 hacking is not worse than putting in work and effort to be beaten by 50 lines of code"},
+        true, 1},
+    ["damn"] = {{"😭 cry"},
+        true, 1},
+    ["dam"] = {{"😭 cry"},
+        true, 1},
+    ["hm"] = {{"😑 hmmmmmmmmmmmmmmmmmmmmmmmm"},
+        true, 1},
+    ["really"] = {{"😑 yes really"},
+        true, 1},
+    ["ye"] = {{"😑 yes really"},
+        true, 1},
+    ["server hop"] = {{"😑 go ragequit"},
+        true, 1},
+    ["ruin"] = {{"😑 i dont care about the feelings of 12 year olds like you"},
+        true, 1},
+    ["attack"] = {{"😑 oh no help they are attacking"},
+        true, 1},
+    ["ana"] = {{"😑 banana"},
+        true, 1},
+    ["ice"] = {{"😑 ok then"},
+        true, 1},
+    ["tra"] = {{"😑 ok then"},
+        true, 1},
+    ["end"] = {{"😑 no"},
+        true, 1},
+    ["?"] = {{"????????????"},
+        false, 1},
+    ["!"] = {{"!!!!!!!!!!!!"},
+        false, 1},
+    ["ip ban"] = {{"😑 i can just use a vpn"},
+        true, 1},
+    ["mate"] = {{"😃 yes"},
+        true, 1},
+    ["bro"] = {{"😃 yes brother"},
+        true, 1},
+    ["bruh"] = {{"😃 yes bruh"},
+        true, 1},
+    ["grass"] = {{"😭 dont touch grass it is too dangerous"},
+        true, 1},
+    ["help"] = {{"😭 no"},
+        true, 1},
+    ["synapse"] = {{"😃 yes i use synapse"},
+        true, 1},
+    ["jjsploit"] = {{"😃 no i use synapse"},
+        true, 1},
+    ["happymod"] = {{"😃 no i use synapse"},
+        true, 1},
+    ["krnl"] = {{"😃 no i use synapse"},
+        true, 1},
+    ["fr"] = {{"😬 for real"},
+        true, 1},
+    ["uh"] = {{"🤔 uhhhhhhhhhhhhh"},
+        true, 1},
+    ["haha"] = {{"😂😂😂HAAHAHAHHAHAHAHAHAHHAHAHAHHAHHA", "😂😂😂HAHAHAHAHAHAHAH", "😂😂😂AHAHAHAHAHAHAH", "😂😂😂AHAHAHAHAHHAHHHHHAHAHHAHAHAA"},
+        true, 1},
+    ["hehe"] = {{"😂😂HEHEHEHEHEHEeHEHEHEE", "😂EEHEHEHEHEHEHHEHE", "😂😂EHHEEHHEHHHEEEEHEHEHEHEHE"},
+        true, 1},
+    ["lol"] = {{"😂😂😂HAAHAHAHHAHAHAHAHAHHAHAHAHHAHHA", "😂😂😂HAHAHAHAHAHAHAH", "😂😂😂AHAHAHAHAHAHAH", "😂😂😂AHAHAHAHAHHAHHHHHAHAHHAHAHAA"},
+        true, 1},
+    ["dont"] = {{"why not"},
+        true, 1},
+    ["again"] = {{"😃 oh no not again"},
+        true, 1},
+    ["dude"] = {{"😃 yes dude"},
+        true, 1},
+    ["riddle"] = {{"😃 no thanks"},
+        true, 1},
+    ["joker"] = {{"who is that"},
+        true, 1},
+    
+    
+    
+}
+game.Players.LocalPlayer.PlayerGui.GameUI:WaitForChild("ChatFrame").ScrollFrame.ChildAdded:Connect(function(textobj)
+    
+    local omsg = textobj.Text
+    local space = string.find(omsg, " ")
+    local msg = string.lower(string.sub(omsg, space+1, #omsg))
+    local plr = string.sub(omsg, 1, space-2)
+    if plr == game.Players.LocalPlayer.Name then return end 
+    if msg == "L" or msg == " L" or msg == "L " then task.wait(cdtime) game.ReplicatedStorage.Remotes.ChatMessage:FireServer("stay mad", false) end
+    for i,v in pairs(messageresponses) do
+        if string.find(msg, i) then
+            spamtext(v, plr)
+        end
+    end
+   if _G.AlwaysReply == true then
+       local str1 = _G.AlwaysReplyMessage
+       if _G.AlwaysReplyWithName == true then
+           str1 = str1 .. " " .. plr
+       end
+    
+       game.ReplicatedStorage.Remotes.ChatMessage:FireServer(str1, false)
+    end
+    
+end)
+--AUTOTOXIC LOGIC END
+
+--ADJUST GUI
+delay(0.7,function()
+local coregui = game:GetService("CoreGui")
+local ui = coregui:FindFirstChild("uiui")
+ui.background.Position = UDim2.new(0,0,0,90)
+end)
