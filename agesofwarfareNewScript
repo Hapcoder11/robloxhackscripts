@@ -879,20 +879,24 @@ fplr.CharacterAdded:Connect(function(char)
 	fhum = char:WaitForChild("Humanoid")
 end)
 
-game.RunService.Heartbeat:Connect(function()
-	local s,e = pcall(function()
-
-		if not _G.isFlying then return end
-		local vel = (fhum.MoveDirection * cFlySpd) + defaultVector
-		if uis:IsKeyDown(Enum.KeyCode.Space) then
-			vel = vel + upVector  
-		end
-		if uis:IsKeyDown(Enum.KeyCode.LeftShift) then
-			vel = vel - upVector
-		end
-		fhrp.Velocity = vel
-	end)
-	if not s then warn(e) end
+spawn(function()
+    while task.wait() do
+        
+    	local s,e = pcall(function()
+    
+    		if not _G.isFlying then return end
+    		local vel = (fhum.MoveDirection * cFlySpd) + defaultVector
+    		if uis:IsKeyDown(Enum.KeyCode.Space) then
+    			vel = vel + upVector  
+    		end
+    		if uis:IsKeyDown(Enum.KeyCode.LeftShift) then
+    			vel = vel - upVector
+    		end
+    		fhrp.Velocity = vel
+    	end)
+    	if not s then warn(e) end
+	
+    end
 end)
 
 --SPAM LOGIC
@@ -1568,7 +1572,7 @@ delay(0.7,function()
 	local coregui = game:GetService("CoreGui")
 	local ui:ScreenGui = coregui:FindFirstChild("uiui")
 	
-	ui.DisplayOrder = -1
+	ui.DisplayOrder = -5
 	ui.background.Position = UDim2.new(0,0,0,90)
 end)
 
