@@ -1573,7 +1573,7 @@ delay(0.7,function()
 	local ui:ScreenGui = coregui:FindFirstChild("uiui")
 	
 	ui.DisplayOrder = -5
-	ui.background.Position = UDim2.new(0.85,0,0,90)
+	ui.background.Position = UDim2.new(0.7,0,0,90)
 end)
 
 
