@@ -879,21 +879,25 @@ fplr.CharacterAdded:Connect(function(char)
     fhum = char:WaitForChild("Humanoid")
 end)
 
-game.RunService.Heartbeat:Connect(function()
-    local s,e = pcall(function()
-
-        if not _G.isFlying then return end
-        local vel = (fhum.MoveDirection * cFlySpd) + defaultVector
-        if uis:IsKeyDown(Enum.KeyCode.Space) then
-            vel = vel + upVector  
-        end
-        if uis:IsKeyDown(Enum.KeyCode.LeftShift) then
-            vel = vel - upVector
-        end
-        fhrp.Velocity = vel
-    end)
-    if not s then warn(e) end
+spawn(function()
+    while task.wait() do
+        local s,e = pcall(function()
+    
+            if not _G.isFlying then return end
+            local vel = (fhum.MoveDirection * cFlySpd) + defaultVector
+            if uis:IsKeyDown(Enum.KeyCode.Space) then
+                vel = vel + upVector  
+            end
+            if uis:IsKeyDown(Enum.KeyCode.LeftShift) then
+                vel = vel - upVector
+            end
+            fhrp.Velocity = vel
+        end)
+        if not s then warn(e) end
+    end
 end)
+    
+
 
 --SPAM LOGIC
  function vrand()
@@ -1623,3 +1627,4 @@ while true do
 end
 end)
 end
+
