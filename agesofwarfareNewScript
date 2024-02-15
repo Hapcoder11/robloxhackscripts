@@ -214,10 +214,10 @@ _G.HeadSize = 28
 
 _G.PlayersTarget = true
 _G.NPCsTarget = true
-local hsize = CombatHax:CreateSlider("Melee Range", 0, 500, function(arg) --the (arg) is the sliders value
+local hsize = CombatHax:CreateSlider("Melee Range", 0, 30, function(arg) --the (arg) is the sliders value
 	_G.HeadSize = arg
 end)
-hsize:Set(4.8)
+hsize:Set(80)
 
 
 
