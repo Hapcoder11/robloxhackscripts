@@ -1,41 +1,233 @@
+local id = 7140186081
+if game.PlaceId ~= id then return end
+
+repeat
+    pcall(function()
+        c = game.Players.LocalPlayer.Character
+    end)
+    task.wait(0.1)
+until c
+game.Players.LocalPlayer.Character.HumanoidRootPart.ChildAdded:Connect(function(child)
+    if child.Name == "BodyVelocity" then
+        child.Velocity = Vector3.new(0,0,0)
+        child.P = 0
+        child.MaxForce = Vector3.new(0,0,0)
+        print(child,child.Velocity, child.P, child.MaxForce)
+    end
+end)
+spawn(function()
+while task.wait() do
+    pcall(function()
+        local md = game.Players.LocalPlayer.Character.Humanoid.MoveDirection
+        local nmd = Vector3.new(md.X/2, 0, md.Z/2)
+        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(game.Players.LocalPlayer.Character.PrimaryPart.CFrame + nmd)
+    end)
+end
+end)
+--SCRIPT BY Happppya#6091
+--important note
+--freeze animations to improve killaura
+
+--infinite yield has a command to freeze animations
+--infinite yield : loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+
+
+--ANTIFALL
+--PRESS G TO TOGGLE
+
+local loadVapeAndInfYield = true
+
+if loadVapeAndInfYield == true then -- makes hacking easier (walkspeed, infjump, teleport, fly)
+    pcall(function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
+    end)
+end
+
+
 local rs = game.ReplicatedStorage
 local alternate = false
-local debugtimes = 150
+local alt = false
 
-while wait(0.32) do
-    for i = 1,30 do
-        pcall(function()
-            local found = false
-            for i,plr in pairs (game.Players:GetChildren()) do
-                if plr ~= game.Players.LocalPlayer then
-                    local ch = plr.Character
-                    local hum = ch.HumanoidRootPart or ch.PrimaryPart or ch.Head
-                    local lch = game.Players.LocalPlayer.Character
-                    local lhum = lch.HumanoidRootPart or lch.PrimaryPart or lch.Head
-                    
-                    local dis = math.abs((lhum.Position - hum.Position).Magnitude)
+pcall(function()
+game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 40
+end)
+function FixGui()
+    local gui = game.Players.LocalPlayer.Character.Head.BillboardGui
+    gui.ImageLabel.ImageColor3 = Color3.new(0,1,0)
+    gui.AlwaysOnTop = true
+    gui.ImageLabel.Size = UDim2.new(1/7.4,0,1,0)
+    gui.Size = UDim2.new(7,0,1,0)
+    local label = Instance.new("TextLabel")
+    label.BackgroundTransparency = 1
+    label.Position = UDim2.new(1/7,0,0,0)
+    label.Size = UDim2.new(5.5/7,0,1,0)
+    label.Parent = gui
+    label.TextScaled = true
+    label.Text = "Happy Hax Loaded"
+    label.TextColor3 = Color3.new(0.4,1,0.5)
+end
+
+function fixothergui()
+    local plr = game.Players.LocalPlayer
+local mobilebuttons = plr.PlayerGui:FindFirstChild("MobileButtons")
+if mobilebuttons then mobilebuttons:Destroy() end
+plr.PlayerGui.Stats.Frame.BackgroundColor3 = Color3.new(1,0.2,0)
+local main = plr.PlayerGui:FindFirstChild("Main")
+
+maincol = Color3.new(1,0.3,0)
+
+main.Background.Damage.BackgroundColor3 = maincol
+main.Background.Armor.BackgroundColor3 = maincol
+main.Background.Main.BackgroundColor3 = maincol
+
+main.Background.Damage.Size = UDim2.new(0.1,0,0.115,0)
+main.Background.Damage.Position = UDim2.new(0.39,0,0.5,0)
+
+main.Background.Armor.Size = UDim2.new(0.1,0,0.115,0)
+main.Background.Armor.Position = UDim2.new(0.51,0,0.5,0)
+
+
+for i,v in pairs(main.Background.Main:GetChildren()) do 
+    if not v:IsA("TextLabel") then
+        v:Destroy()
+    end
+end
+main.Background.Main.BackgroundTransparency = 0.5
+main.Background.Main.Size = UDim2.new(0.3,0,0.3,0)
+main.Background.Main.Position = UDim2.new(0.35,0,0.67,0)
+main.Background.Main.Level.Size = UDim2.new(1,0,1,0)
+
+local corner = Instance.new("UICorner", main.Background.Main)
+if (tostring(tonumber(main.Background.Main.Level.Text))) ~= "nil" then
+    main.Background.Main.Level.Text = "lvl " .. main.Background.Main.Level.Text
+end
+
+local hp = game.Players.LocalPlayer.PlayerGui.Health
+local ratio = hp.Background:FindFirstChild("UIAspectRatioConstraint")
+if ratio then ratio:Destroy() end
+hp.Background.Size = UDim2.new(0.5,0,0.085,0)
+hp.Background.Position = UDim2.new(0.5,0,0.997,0)
+hp.Background.Label.Size = UDim2.new(1,0,0.4,0)
+hp.Background.Label.Position = UDim2.new(0,0,0.5,0)
+hp.Background.Label.Text = "hacks made by Happppya#6091"
+hp.Background.Label.TextScaled = true
+hp.Background.HealthFrame.Health.Bar.BackgroundColor3 = maincol
+hp.Background.HealthFrame.Health.BackgroundColor3 = Color3.new(0.4,0.4,0.4)
+end
+
+fixothergui()
+FixGui()
+
+local antifallpart = Instance.new("Part",workspace)
+antifallpart.Position = Vector3.new(0,15,0)
+antifallpart.Size = Vector3.new(2048,0.2,2048)
+antifallpart.Anchored = true
+antifallpart.CanCollide = true
+antifallpart.Material = Enum.Material.Neon
+antifallpart.Transparency = 0.86
+
+local uis = game:GetService("UserInputService")
+alt = false
+
+uis.InputBegan:Connect(function(key,processed)
+    if processed then return end
+    if key.KeyCode == Enum.KeyCode.G then
+        alt = not alt
+        
+        if alt == true then
+            antifallpart.CanCollide = false
+            antifallpart.Transparency = 1
+            else
+                antifallpart.CanCollide = true
+            antifallpart.Transparency = 0.86
+        end
+    end
+end)
+
+spawn(function() -- autoshield
+    while task.wait(0.15) do
+     game.ReplicatedStorage.Remotes.Block:FireServer(true)
+    end
+end)
+
+function angleRightArmTo(objpos)
+    lcf = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+    local lookpos = Vector3.new(objpos.X, lcf.Position.Y, objpos.Z)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.lookAt(lcf.Position, lookpos)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0,math.rad(15),0) 
+end
+
+local debounce = false
+local cooldown = 0.32
+spawn(function()
+    while task.wait(1) do
+        fixothergui()
+    end
+end)
+while task.wait() do -- killaura
+    
+    pcall(function() -- anti knockback included in this loop
+        if not game.Players.LocalPlayer.Character.Head.BillboardGui:FindFirstChild("TextLabel") then
+            FixGui()
+        end
+    end)
+    
+    if debounce == true then 
+        task.wait(cooldown)
+        debounce = false
+        
+    else
+        for i = 1,30 do
+            if game.Players.LocalPlayer.SafeZone.Value then break end
+            pcall(function()
                 
-                    if dis < 7.5 then
-                        found = true
-                      
-                        --lhum:SetPrimaryPartCFrame(CFrame.LookAt(lhum.Position, hum.Position))
+                local found = false
+                local best
+                local bestdis = 7.2
+                for i,plr in pairs (game.Players:GetChildren()) do
+                    
+                    
+                    
+                    if plr ~= game.Players.LocalPlayer and plr.Character.Humanoid.Health > 0 and plr.SafeZone.Value == false then
+                        local ch = plr.Character
+                        local hum = ch.HumanoidRootPart or ch.PrimaryPart or ch.Head
+                        local lch = game.Players.LocalPlayer.Character
+                        local lhum = lch.HumanoidRootPart or lch.PrimaryPart or lch.Head
+                        
+                        local dis = math.abs((lhum.Position - hum.Position).Magnitude)
+                    
+                        if dis < bestdis then
+                            found = true
+                            best = hum
+                            bestdis = dis
+                            
+                            
+                        end
                     end
                 end
-            end
-            
-            if found == true then
-                alternate = not alternate
-                if alternate == true then
-                    rs.Remotes.Hit:FireServer("Right Arm")
-                else
-                    rs.Remotes.Hit:FireServer("Left Arm")
-                end
+                
                
-                debugtimes = debugtimes - 1
-                if debugtimes == 0 then return end
-            end
-        end)
-        task.wait(0.011)
+                if found == true then
+                    debounce = true
+                    angleRightArmTo(best.Position)
+                    
+                    alternate = not alternate
+                    if alternate == true then
+                        rs.Remotes.Hit:FireServer("Right Arm")
+                    else
+                        rs.Remotes.Hit:FireServer("Left Arm")
+                    end
+                   
+                    lcf = hum.CFrame
+                    
+                end
+            end)
+            task.wait(0.011)
+        end
     end
+    
+    
    
 end
+
